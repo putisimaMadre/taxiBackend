@@ -1,7 +1,9 @@
 package com.formatoweb.taxi.controllers;
 
 import com.formatoweb.taxi.dto.user.CreateUserRequest;
-import com.formatoweb.taxi.models.User;
+import com.formatoweb.taxi.dto.user.CreateUserResponse;
+import com.formatoweb.taxi.dto.user.LoginRequest;
+import com.formatoweb.taxi.dto.user.LoginResponse;
 import com.formatoweb.taxi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,11 +24,23 @@ public class AuthController {
     @PostMapping(value = "/register")
     public ResponseEntity<?> create(@RequestBody CreateUserRequest createUserRequest){
         try{
-            User user = userService.create(createUserRequest);
+            CreateUserResponse user = userService.create(createUserRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         }catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                     "message", e.getMessage(), "statusCode", HttpStatus.BAD_REQUEST.value()
+            ));
+        }
+    }
+
+    @PostMapping(value = "/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
+        try{
+            LoginResponse response = userService.login(loginRequest);
+            return ResponseEntity.ok(response);
+        }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "message", e.getMessage(), "statusCode", HttpStatus.UNAUTHORIZED.value()
             ));
         }
     }
