@@ -1,7 +1,11 @@
 package com.formatoweb.taxi.services;
 
 import com.formatoweb.taxi.dto.user.CreateUserRequest;
+import com.formatoweb.taxi.models.Role;
 import com.formatoweb.taxi.models.User;
+import com.formatoweb.taxi.models.UserHasRoles;
+import com.formatoweb.taxi.repositories.RoleRepository;
+import com.formatoweb.taxi.repositories.UserHasRolesRepository;
 import com.formatoweb.taxi.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private UserHasRolesRepository userHasRolesRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -29,6 +39,12 @@ public class UserService {
         user.setEmail(createUserRequest.email);
         String encryptedPassword = passwordEncoder.encode(createUserRequest.password);
         user.setPassword(encryptedPassword);
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        Role clientRole = roleRepository.findById("CLIENT").orElseThrow(
+                ()->new RuntimeException("El rol de cliente no existe")
+        );
+        UserHasRoles userHasRoles = new UserHasRoles(savedUser, clientRole);
+        userHasRolesRepository.save(userHasRoles);
+        return savedUser;
     }
 }

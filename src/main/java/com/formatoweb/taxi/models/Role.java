@@ -1,10 +1,14 @@
 package com.formatoweb.taxi.models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+@Data
 @Entity
 @Table(name="roles")
 public class Role {
@@ -26,6 +30,9 @@ public class Role {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserHasRoles> users = new HashSet<>();
 
     public Role(){}
 
