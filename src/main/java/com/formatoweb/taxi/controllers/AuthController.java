@@ -1,7 +1,7 @@
 package com.formatoweb.taxi.controllers;
 
 import com.formatoweb.taxi.dto.user.CreateUserRequest;
-import com.formatoweb.taxi.dto.user.CreateUserResponse;
+import com.formatoweb.taxi.dto.user.UserResponse;
 import com.formatoweb.taxi.dto.user.LoginRequest;
 import com.formatoweb.taxi.dto.user.LoginResponse;
 import com.formatoweb.taxi.services.UserService;
@@ -24,7 +24,7 @@ public class AuthController {
     @PostMapping(value = "/register")
     public ResponseEntity<?> create(@RequestBody CreateUserRequest createUserRequest){
         try{
-            CreateUserResponse user = userService.create(createUserRequest);
+            LoginResponse user = userService.create(createUserRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         }catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
